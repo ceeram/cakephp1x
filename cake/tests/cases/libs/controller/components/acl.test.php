@@ -161,7 +161,30 @@ class PermissionTwoTest extends CakeTestModel {
  */
 	var $actsAs = null;
 }
+/**
+* Test Person class - self joined model
+*
+* @package       cake
+* @subpackage    cake.tests.cases.libs.controller.components
+*/
+class AclPerson extends CakeTestModel {
 
+/**
+ * name property
+ *
+ * @var string
+ * @access public
+ */
+	var $name = 'AclPerson';
+
+/**
+ * useTable property
+ *
+ * @var string
+ * @access public
+ */
+	var $useTable = 'people';
+}
 /**
  * DbAclTwoTest class
  *
@@ -207,7 +230,7 @@ class AclComponentTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.aro_two', 'core.aco_two', 'core.aros_aco_two');
+	var $fixtures = array('core.person', 'core.aro_two', 'core.aco_two', 'core.aros_aco_two');
 
 /**
  * startTest method
@@ -579,6 +602,94 @@ class AclComponentTest extends CakeTestCase {
 		$this->assertFalse($this->Acl->check('paul', 'ads'));
 
 		$this->assertFalse($this->Acl->check('nobody', 'comments'));
+	}
+
+/**
+ * test Inherited rights
+ *
+ * @return void
+ * @access public
+ */
+	function testInherited() {
+//grandfather
+		$aroData = array(
+			
+				'model' => 'AclPerson',
+				'foreign_key' => 7,
+				'parent_id' => null
+			
+		);
+		$this->Acl->Aro->create();
+		$this->Acl->Aro->save($aroData);
+//father
+		$parent_id = $this->Acl->Aro->id;
+		$aroData = array(
+			
+				'model' => 'AclPerson',
+				'foreign_key' => 3,
+				'parent_id' => $parent_id
+			
+		);
+		$this->Acl->Aro->create();
+		$this->Acl->Aro->save($aroData);
+//person
+		$parent_id = $this->Acl->Aro->id;
+		$aroData = array(
+			
+				'model' => 'AclPerson',
+				'foreign_key' => 1,
+				'parent_id' => $parent_id
+			
+		);
+		$this->Acl->Aro->create();
+		$this->Acl->Aro->save($aroData);
+//grandfather
+		$acoData = array(
+			
+				'model' => 'AclPerson',
+				'foreign_key' => 7,
+				'parent_id' => null
+			
+		);
+		$this->Acl->Aco->create();
+		$this->Acl->Aco->save($acoData);
+//father
+		$parent_id = $this->Acl->Aco->id;
+		$acoData = array(
+			
+				'model' => 'AclPerson',
+				'foreign_key' => 3,
+				'parent_id' => $parent_id
+			
+		);
+		$this->Acl->Aco->create();
+		$this->Acl->Aco->save($acoData);
+//person
+		$parent_id = $this->Acl->Aco->id;
+		$acoData = array(
+			
+				'model' => 'AclPerson',
+				'foreign_key' => 1,
+				'parent_id' => $parent_id
+			
+		);
+		$this->Acl->Aco->create();
+		$this->Acl->Aco->save($acoData);
+
+		$grandfather = array('AclPerson' => array('id' => 7));
+		$father = array('AclPerson' => array('id' => 3));
+		$person = array('AclPerson' => array('id' => 1));
+		$this->assertFalse($this->Acl->check($grandfather, $father, 'read'));
+		$this->assertFalse($this->Acl->check($father, $father, 'read'));
+		$this->assertFalse($this->Acl->check($person, $father, 'read'));
+		$this->Acl->allow($grandfather, $father, 'read');
+		$this->assertTrue($this->Acl->check($grandfather, $father, 'read'));
+		$this->assertTrue($this->Acl->check($father, $father, 'read'));
+		$this->assertTrue($this->Acl->check($person, $father, 'read'));
+		$this->Acl->deny($father, $father, 'read');
+		$this->assertTrue($this->Acl->check($grandfather, $father, 'read'));
+		$this->assertFalse($this->Acl->check($father, $father, 'read'));
+		$this->assertFalse($this->Acl->check($person, $father, 'read'));
 	}
 
 /**
