@@ -611,70 +611,29 @@ class AclComponentTest extends CakeTestCase {
  * @access public
  */
 	function testInherited() {
-//grandfather
-		$aroData = array(
-			
-				'model' => 'AclPerson',
-				'foreign_key' => 7,
-				'parent_id' => null
-			
+		$data = array(
+			'model' => 'AclPerson',
+			'foreign_key' => 7,
+			'parent_id' => null
 		);
 		$this->Acl->Aro->create();
-		$this->Acl->Aro->save($aroData);
-//father
-		$parent_id = $this->Acl->Aro->id;
-		$aroData = array(
-			
-				'model' => 'AclPerson',
-				'foreign_key' => 3,
-				'parent_id' => $parent_id
-			
-		);
+		$this->Acl->Aro->save($data);
+		$this->Acl->Aco->create();
+		$this->Acl->Aco->save($data);
+		$data['foreign_key'] = 3;
+		$data['parent_id'] = $this->Acl->Aro->id;
 		$this->Acl->Aro->create();
-		$this->Acl->Aro->save($aroData);
-//person
-		$parent_id = $this->Acl->Aro->id;
-		$aroData = array(
-			
-				'model' => 'AclPerson',
-				'foreign_key' => 1,
-				'parent_id' => $parent_id
-			
-		);
+		$this->Acl->Aro->save($data);
+		$data['parent_id'] = $this->Acl->Aco->id;
+		$this->Acl->Aco->create();
+		$this->Acl->Aco->save($data);
+		$data['foreign_key'] = 1;
+		$data['parent_id'] = $this->Acl->Aro->id;
 		$this->Acl->Aro->create();
-		$this->Acl->Aro->save($aroData);
-//grandfather
-		$acoData = array(
-			
-				'model' => 'AclPerson',
-				'foreign_key' => 7,
-				'parent_id' => null
-			
-		);
+		$this->Acl->Aro->save($data);
+		$data['parent_id'] = $this->Acl->Aco->id;
 		$this->Acl->Aco->create();
-		$this->Acl->Aco->save($acoData);
-//father
-		$parent_id = $this->Acl->Aco->id;
-		$acoData = array(
-			
-				'model' => 'AclPerson',
-				'foreign_key' => 3,
-				'parent_id' => $parent_id
-			
-		);
-		$this->Acl->Aco->create();
-		$this->Acl->Aco->save($acoData);
-//person
-		$parent_id = $this->Acl->Aco->id;
-		$acoData = array(
-			
-				'model' => 'AclPerson',
-				'foreign_key' => 1,
-				'parent_id' => $parent_id
-			
-		);
-		$this->Acl->Aco->create();
-		$this->Acl->Aco->save($acoData);
+		$this->Acl->Aco->save($data);
 
 		$grandfather = array('AclPerson' => array('id' => 7));
 		$father = array('AclPerson' => array('id' => 3));
