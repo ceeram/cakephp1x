@@ -58,9 +58,18 @@ class ConnectionManager extends Object {
  * Constructor.
  *
  */
-	function __construct() {
-		if (class_exists('DATABASE_CONFIG')) {
-			$this->config =& new DATABASE_CONFIG();
+	function __construct($plugin = null) {
+		if (!$plugin) {
+			if (class_exists('DATABASE_CONFIG')) {
+				$this->config =& new DATABASE_CONFIG();
+			}
+		} else {
+			$file = App::pluginPath($plugin) . 'config' . DS . 'database.php';
+			$class = strtoupper($plugin).'_DATABASE_CONFIG';
+			include_once($file);
+			if (class_exists($class)) {
+				$this->config =& new $class();
+			}
 		}
 		$this->_getConnectionObjects();
 	}
@@ -72,13 +81,12 @@ class ConnectionManager extends Object {
  * @access public
  * @static
  */
-	function &getInstance() {
+	function &getInstance($plugin = null) {
 		static $instance = array();
 
 		if (!$instance) {
-			$instance[0] =& new ConnectionManager();
+			$instance[0] =& new ConnectionManager($plugin);
 		}
-
 		return $instance[0];
 	}
 
@@ -91,8 +99,12 @@ class ConnectionManager extends Object {
  * @static
  */
 	function &getDataSource($name) {
-		$_this =& ConnectionManager::getInstance();
-
+		if(strpos($name, '.') !== false) {
+			list($plugin, $name) = pluginSplit($name);
+			$_this =& ConnectionManager::getInstance($plugin);
+		} else {
+			$_this =& ConnectionManager::getInstance();
+		}
 		if (!empty($_this->_dataSources[$name])) {
 			$return =& $_this->_dataSources[$name];
 			return $return;
