@@ -311,8 +311,10 @@ class AppImportTest extends UnitTestCase {
 		$expected = array(
 			APP . 'models' . DS,
 			APP,
-			ROOT . DS . LIBS . 'model' . DS
+			CAKE_CORE_INCLUDE_PATH . DS . LIBS . 'model' . DS
 		);
+		debug($expected);
+		debug($old);
 		$this->assertEqual($expected, $old);
 
 		App::build(array('models' => array('/path/to/models/')));
@@ -323,7 +325,7 @@ class AppImportTest extends UnitTestCase {
 			APP . 'models' . DS,
 			'/path/to/models/',
 			APP,
-			ROOT . DS . LIBS . 'model' . DS
+			CAKE_CORE_INCLUDE_PATH . DS . LIBS . 'model' . DS
 		);
 		$this->assertEqual($expected, $new);
 
@@ -343,7 +345,7 @@ class AppImportTest extends UnitTestCase {
 		$expected = array(
 			APP . 'models' . DS,
 			APP,
-			ROOT . DS . LIBS . 'model' . DS
+			CAKE_CORE_INCLUDE_PATH . DS . LIBS . 'model' . DS
 		);
 		$this->assertEqual($expected, $old);
 
@@ -369,13 +371,13 @@ class AppImportTest extends UnitTestCase {
  */
 	function testCore() {
 		$model = App::core('models');
-		$this->assertEqual(array(ROOT . DS . LIBS . 'model' . DS), $model);
+		$this->assertEqual(array(CAKE_CORE_INCLUDE_PATH . DS . LIBS . 'model' . DS), $model);
 
 		$view = App::core('views');
-		$this->assertEqual(array(ROOT . DS . LIBS . 'view' . DS), $view);
+		$this->assertEqual(array(CAKE_CORE_INCLUDE_PATH . DS . LIBS . 'view' . DS), $view);
 
 		$controller = App::core('controllers');
-		$this->assertEqual(array(ROOT . DS . LIBS . 'controller' . DS), $controller);
+		$this->assertEqual(array(CAKE_CORE_INCLUDE_PATH . DS . LIBS . 'controller' . DS), $controller);
 
 	}
 
