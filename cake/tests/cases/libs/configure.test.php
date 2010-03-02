@@ -313,8 +313,6 @@ class AppImportTest extends UnitTestCase {
 			APP,
 			CAKE_CORE_INCLUDE_PATH . DS . LIBS . 'model' . DS
 		);
-		debug($expected);
-		debug($old);
 		$this->assertEqual($expected, $old);
 
 		App::build(array('models' => array('/path/to/models/')));
