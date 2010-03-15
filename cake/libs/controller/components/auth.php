@@ -449,9 +449,6 @@ class AuthComponent extends Object {
 			return false;
 		}
 		list($plugin, $model) = pluginSplit($this->userModel);
-		if(!$plugin){
-			$model = $this->userModel;
-		}
 		$defaults = array(
 			'loginAction' => array(
 				'controller' => Inflector::underscore(Inflector::pluralize($model)),
