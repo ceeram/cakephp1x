@@ -71,6 +71,7 @@ class ConnectionManager extends Object {
 				$this->config =& new $class();
 			}
 		}
+		$this->_getConnectionObjects();
 	}
 
 /**
