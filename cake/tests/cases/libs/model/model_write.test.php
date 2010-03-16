@@ -163,6 +163,29 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * Ensure that if the id key is null but present the save doesn't fail (with an
+ * x sql error: "Column id specified twice")
+ *
+ * @return void
+ * @access public
+ */
+	function testSaveUuidNull() {
+		// SQLite does not support non-integer primary keys
+		$this->skipIf($this->db->config['driver'] == 'sqlite');
+
+		$this->loadFixtures('Uuid');
+		$TestModel =& new Uuid();
+
+		$TestModel->save(array('title' => 'Test record', 'id' => null));
+		$result = $TestModel->findByTitle('Test record');
+		$this->assertEqual(
+			array_keys($result['Uuid']),
+			array('id', 'title', 'count', 'created', 'updated')
+		);
+		$this->assertEqual(strlen($result['Uuid']['id']), 36);
+	}
+
+/**
  * testZeroDefaultFieldValue method
  *
  * @access public
@@ -328,6 +351,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$data = array(
 			'OverallFavorite' => array(
+				'id' => 22,
 		 		'model_type' => '8-track',
 				'model_id' => '3',
 				'priority' => '1'
@@ -391,6 +415,7 @@ class ModelWriteTest extends BaseModelTest {
 		$User = new CounterCacheUser();
 		$Post = new CounterCachePost();
 		$data = array('Post' => array(
+			'id' => 22,
 			'title' => 'New Post',
 			'user_id' => 66
 		));
@@ -1611,7 +1636,7 @@ class ModelWriteTest extends BaseModelTest {
 				'DoomedSomethingElse' => array(
 					'className' => 'SomethingElse',
 					'joinTable' => 'join_things',
-					'conditions' => 'JoinThing.doomed = 1',
+					'conditions' => 'JoinThing.doomed = true',
 					'unique' => true
 				),
 				'NotDoomedSomethingElse' => array(
