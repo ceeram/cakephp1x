@@ -1584,6 +1584,11 @@ class Model extends Overloadable {
 		$validates = true;
 		$return = array();
 
+		if (empty($data) && $options['validate'] !== false) {
+			$result = $this->save($data, $options);
+			return !empty($result);
+		}
+
 		if ($options['atomic'] && $options['validate'] !== 'only') {
 			$db->begin($this);
 		}
@@ -1842,7 +1847,7 @@ class Model extends Overloadable {
 				$model =& $this->{$assoc};
 				$conditions = array($model->escapeField($data['foreignKey']) => $id);
 				if ($data['conditions']) {
-					$conditions = array_merge($data['conditions'], $conditions);
+					$conditions = array_merge((array)$data['conditions'], $conditions);
 				}
 				$model->recursive = -1;
 

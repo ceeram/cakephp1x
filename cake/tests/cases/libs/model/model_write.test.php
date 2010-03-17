@@ -1590,7 +1590,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $Story->save();
 		$this->assertTrue($result);
 
-		$result = $Story->find('all');
+		$result = $Story->find('all', array('order' => array('Story.story')));
 		$expected = array(
 			array(
 				'Story' => array(
@@ -3708,6 +3708,10 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
     function testProductUpdateAll() {
+		$this->skipIf(
+			$this->db->config['driver'] == 'postgres',
+			'%s Currently, there is no way of doing joins in an update statement in postgresql'
+		);
 		$this->loadFixtures('ProductUpdateAll', 'GroupUpdateAll');
 		$ProductUpdateAll =& new ProductUpdateAll();
 
@@ -3746,6 +3750,7 @@ class ModelWriteTest extends BaseModelTest {
 
         $this->assertEqual($results, $expected);
     }
+
 /**
  * testProductUpdateAllWithoutForeignKey
  *
@@ -3754,6 +3759,10 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
     function testProductUpdateAllWithoutForeignKey() {
+		$this->skipIf(
+			$this->db->config['driver'] == 'postgres',
+			'%s Currently, there is no way of doing joins in an update statement in postgresql'
+		);
 		$this->loadFixtures('ProductUpdateAll', 'GroupUpdateAll');
 		$ProductUpdateAll =& new ProductUpdateAll();
 
@@ -3797,6 +3806,24 @@ class ModelWriteTest extends BaseModelTest {
                     'code' => 120)));
         $this->assertEqual($resultsFkFalse, $expected);
     }
+
+/**
+ * test that saveAll behaves like plain save() when suplied empty data
+ *
+ * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
+ * @access public
+ * @return void
+ */
+	function testSaveAllEmptyData() {
+		$this->loadFixtures('Article', 'ProductUpdateAll');
+		$model =& new Article();
+		$result = $model->saveAll(array(), array('validate' => 'first'));
+		$this->assertTrue($result);
+
+		$model =& new ProductUpdateAll();
+		$result = $model->saveAll(array());
+		$this->assertFalse($result);
+	}
 
 }
 
