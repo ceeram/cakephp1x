@@ -71,6 +71,7 @@ class AclBehavior extends ModelBehavior {
  * Retrieves the Aro/Aco node for this model
  *
  * @param mixed $ref
+ * @param string $type Only needed when Acl is set up as 'both', specify 'Aro' or 'Aco' to get the correct node
  * @return array
  * @access public
  */
