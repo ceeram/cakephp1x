@@ -625,7 +625,7 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
- * test that being redirected to the login page, with no post data does 
+ * test that being redirected to the login page, with no post data does
  * not set the session value.  Saving the session value in this circumstance
  * can cause the user to be redirected to an already public page.
  *
